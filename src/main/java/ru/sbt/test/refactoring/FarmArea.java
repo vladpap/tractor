@@ -16,4 +16,12 @@ public class FarmArea {
     public int getY() {
         return y;
     }
+
+    public FarmArea movePosition(FarmArea farmArea) {
+        return new FarmArea(this.x + farmArea.getX(), this.y + farmArea.getY());
+    }
+
+    public boolean isInArea(FarmArea area) {
+        return (this.x > area.getX() || this.y > area.getY());
+    }
 }
