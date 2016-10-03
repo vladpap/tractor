@@ -1,61 +1,52 @@
 package ru.sbt.test.refactoring;
 
-import static ru.sbt.test.refactoring.Orientation.*;
-import static ru.sbt.test.refactoring.TypeMoving.*;
+import ru.sbt.test.refactoring.command.Command;
+import ru.sbt.test.refactoring.position.FarmArea;
+import ru.sbt.test.refactoring.position.Orientation;
+import ru.sbt.test.refactoring.position.Position;
+import ru.sbt.test.refactoring.position.PositionInArea;
+
+import static ru.sbt.test.refactoring.position.Orientation.NORTH;
 
 public class Tractor {
 
-    private FarmArea position;
-    private Orientation orientation;
+    private Position position;
     private final FarmArea field;
 
     public Tractor() {
-        this(new FarmArea(0, 0), new FarmArea(5, 5), NORTH);
+        this(new PositionInArea(0, 0), new FarmArea(5, 5), NORTH);
     }
 
     public Tractor(Orientation orientation) {
-        this(new FarmArea(0, 0), new FarmArea(5, 5), orientation);
+        this(new PositionInArea(0, 0), new FarmArea(5, 5), orientation);
     }
 
-    public Tractor(FarmArea position, Orientation orientation) {
+    public Tractor(PositionInArea position, Orientation orientation) {
         this(position, new FarmArea(5, 5), orientation);
     }
 
-    public Tractor(FarmArea position, FarmArea field, Orientation orientation) {
-        this.position = position;
+    public Tractor(PositionInArea position, FarmArea field, Orientation orientation) {
+        this.position = new Position(position, orientation);
         this.field = field;
-        this.orientation = orientation;
     }
 
-    public void move(TypeMoving command) {
-        if (command.equals(FORWARD)) {
-            moveForwards();
-        } else if (command.equals(TURNCLOCKWISE)) {
-            turnClockwise();
-        }
-    }
-
-    private void moveForwards() {
-        position = position.movePosition(orientation.moveForvard());
-        if (position.isInArea(field)) {
+    public void move(Command command) {
+        command.executed(position);
+        if (position.getPositionInArea().isInArea(field)) {
             throw new TractorInDitchException();
         }
     }
 
-    private void turnClockwise() {
-        orientation = orientation.turnClockwise();
-    }
-
     public int getPositionX() {
-        return position.getX();
+        return position.getPositionInArea().getX();
     }
 
     public int getPositionY() {
-        return position.getY();
+        return position.getPositionInArea().getY();
     }
 
     public Orientation getOrientation() {
-        return orientation;
+        return position.getOrientation();
     }
 
 }
